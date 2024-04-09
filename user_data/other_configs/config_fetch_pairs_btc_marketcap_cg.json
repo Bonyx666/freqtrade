@@ -67,7 +67,7 @@
     "pairlists": [
         {
             "method": "MarketCapPairList",
-            "number_assets": 30,
+            "number_assets": 40,
             "max_rank": 50,
             "refresh_period": 86400
         },
