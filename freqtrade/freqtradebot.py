@@ -37,7 +37,7 @@ from freqtrade.rpc.rpc_types import (ProfitLossStr, RPCCancelMsg, RPCEntryMsg, R
                                      RPCExitMsg, RPCProtectionMsg)
 from freqtrade.strategy.interface import IStrategy
 from freqtrade.strategy.strategy_wrapper import strategy_safe_wrapper
-from freqtrade.util import FtPrecise, PeriodicCache
+from freqtrade.util import MeasureTime, PeriodicCache
 from freqtrade.util.migrations import migrate_binance_futures_names
 from freqtrade.wallets import Wallets
 
@@ -65,7 +65,7 @@ class FreqtradeBot(LoggingMixin):
         # Init objects
         self.config = config
         exchange_config: ExchangeConfig = deepcopy(config['exchange'])
-        # Remove credentials from original exchange config to avoid accidental credentail exposure
+        # Remove credentials from original exchange config to avoid accidental credential exposure
         remove_exchange_credentials(config['exchange'], True)
 
         self.strategy: IStrategy = StrategyResolver.load_strategy(self.config)
@@ -118,7 +118,8 @@ class FreqtradeBot(LoggingMixin):
 
         # Protect exit-logic from forcesell and vice versa
         self._exit_lock = Lock()
-        LoggingMixin.__init__(self, logger, timeframe_to_seconds(self.strategy.timeframe))
+        timeframe_secs = timeframe_to_seconds(self.strategy.timeframe)
+        LoggingMixin.__init__(self, logger, timeframe_secs)
 
         self._schedule = Scheduler()
 
@@ -142,6 +143,16 @@ class FreqtradeBot(LoggingMixin):
 
         self.__msg_cache = PeriodicCache(
             maxsize=1000, ttl=timeframe_to_seconds(self.config['timeframe']))
+
+        def log_took_too_long(duration: float, time_limit: float):
+            logger.warning(
+                f"Strategy analysis took {duration:.2f}, which is 25% of the timeframe. "
+                "This can lead to delayed orders and missed signals."
+                "Consider either reducing the amount of work your strategy performs "
+                "or reduce the amount of pairs in the Pairlist."
+            )
+
+        self._measure_execution = MeasureTime(log_took_too_long, timeframe_secs * 0.25)
 
     def notify_status(self, msg: str, msg_type=RPCMessageType.STATUS, strategy_version: str = '') -> None:
         """
@@ -180,7 +191,7 @@ class FreqtradeBot(LoggingMixin):
         try:
             Trade.commit()
         except Exception:
-            # Exeptions here will be happening if the db disappeared.
+            # Exceptions here will be happening if the db disappeared.
             # At which point we can no longer commit anyway.
             pass
 
@@ -228,10 +239,11 @@ class FreqtradeBot(LoggingMixin):
         strategy_safe_wrapper(self.strategy.bot_loop_start, supress_error=True)(
             current_time=datetime.now(timezone.utc))
 
-        self.strategy.analyze(self.active_pair_whitelist)
+        with self._measure_execution:
+            self.strategy.analyze(self.active_pair_whitelist)
 
         with self._exit_lock:
-            # Check for exchange cancelations, timeouts and user requested replace
+            # Check for exchange cancellations, timeouts and user requested replace
             self.manage_open_orders()
 
         # Protect from collisions with force_exit.
@@ -282,7 +294,7 @@ class FreqtradeBot(LoggingMixin):
             }
             self.rpc.send_msg(msg)
 
-    def _refresh_active_whitelist(self, trades: List[Trade] = []) -> List[str]:
+    def _refresh_active_whitelist(self, trades: Optional[List[Trade]] = None) -> List[str]:
         """
         Refresh active whitelist from pairlist or edge and extend it with
         pairs that have open trades.
@@ -1316,12 +1328,12 @@ class FreqtradeBot(LoggingMixin):
 
     def manage_trade_stoploss_orders(self, trade: Trade, stoploss_orders: List[Dict]):
         """
-        Perform required actions acording to existing stoploss orders of trade
+        Perform required actions according to existing stoploss orders of trade
         :param trade: Corresponding Trade
         :param stoploss_orders: Current on exchange stoploss orders
         :return: None
         """
-        # If all stoploss orderd are canceled for some reason we add it again
+        # If all stoploss ordered are canceled for some reason we add it again
         canceled_sl_orders = [o for o in stoploss_orders
                               if o['status'] in ('canceled', 'cancelled')]
         if (
