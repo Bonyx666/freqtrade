@@ -34,7 +34,7 @@ def informative(timeframe: str, asset: str = '',
         @informative('1h')
         def populate_indicators_1h(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
             dataframe['rsi'] = ta.RSI(dataframe, timeperiod=14)
-            return dataframe`
+            return dataframe
 
     :param timeframe: Informative timeframe. Must always be equal or higher than strategy timeframe.
     :param asset: Informative asset, for example BTC, BTC/USDT, ETH/BTC. Do not specify to use
@@ -64,7 +64,7 @@ def informative(timeframe: str, asset: str = '',
     def decorator(fn: PopulateIndicators):
         informative_pairs = getattr(fn, '_ft_informative', [])
         informative_pairs.append(InformativeData(_asset, _timeframe, _fmt, _ffill, _candle_type))
-        setattr(fn, '_ft_informative', informative_pairs)
+        setattr(fn, '_ft_informative', informative_pairs)  # noqa: B010
         return fn
     return decorator
 
