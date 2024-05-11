@@ -214,22 +214,22 @@ def text_table_add_metrics(strat_results: Dict) -> str:
             ('Absolute profit ', fmt_coin(strat_results['profit_total_abs'],
                                           strat_results['stake_currency'])),
             ('Total profit %', f"{strat_results['profit_total']:.2%}"),
-            ('CAGR %', f"{strat_results['cagr']:.2%}" if 'cagr' in strat_results else 'N/A'),
-            ('Sortino', f"{strat_results['sortino']:.2f}" if 'sortino' in strat_results else 'N/A'),
-            ('Sharpe', f"{strat_results['sharpe']:.2f}" if 'sharpe' in strat_results else 'N/A'),
-            ('Calmar', f"{strat_results['calmar']:.2f}" if 'calmar' in strat_results else 'N/A'),
+            # ('CAGR %', f"{strat_results['cagr']:.2%}" if 'cagr' in strat_results else 'N/A'),
+            # ('Sortino', f"{strat_results['sortino']:.2f}" if 'sortino' in strat_results else 'N/A'),
+            # ('Sharpe', f"{strat_results['sharpe']:.2f}" if 'sharpe' in strat_results else 'N/A'),
+            # ('Calmar', f"{strat_results['calmar']:.2f}" if 'calmar' in strat_results else 'N/A'),
             ('Profit factor', f'{strat_results["profit_factor"]:.2f}' if 'profit_factor'
                               in strat_results else 'N/A'),
             ('Expectancy (Ratio)', (
                 f"{strat_results['expectancy']:.2f} ({strat_results['expectancy_ratio']:.2f})" if
                 'expectancy_ratio' in strat_results else 'N/A')),
             ('Trades per day', strat_results['trades_per_day']),
-            ('Avg. daily profit %',
-             f"{(strat_results['profit_total'] / strat_results['backtest_days']):.2%}"),
+            # ('Avg. daily profit %',
+            #  f"{(strat_results['profit_total'] / strat_results['backtest_days']):.2%}"),
             ('Avg. stake amount', fmt_coin(strat_results['avg_stake_amount'],
                                            strat_results['stake_currency'])),
-            ('Total trade volume', fmt_coin(strat_results['total_volume'],
-                                            strat_results['stake_currency'])),
+            # ('Total trade volume', fmt_coin(strat_results['total_volume'],
+            #                                 strat_results['stake_currency'])),
             *short_metrics,
             ('', ''),  # Empty line to improve readability
             ('Best Pair', f"{strat_results['best_pair']['key']} "
@@ -240,17 +240,17 @@ def text_table_add_metrics(strat_results: Dict) -> str:
             ('Worst trade', f"{worst_trade['pair']} "
                             f"{worst_trade['profit_ratio']:.2%}"),
 
-            ('Best day', fmt_coin(strat_results['backtest_best_day_abs'],
-                                  strat_results['stake_currency'])),
-            ('Worst day', fmt_coin(strat_results['backtest_worst_day_abs'],
-                                   strat_results['stake_currency'])),
+            # ('Best day', fmt_coin(strat_results['backtest_best_day_abs'],
+            #                       strat_results['stake_currency'])),
+            # ('Worst day', fmt_coin(strat_results['backtest_worst_day_abs'],
+            #                        strat_results['stake_currency'])),
             ('Days win/draw/lose', f"{strat_results['winning_days']} / "
                 f"{strat_results['draw_days']} / {strat_results['losing_days']}"),
             ('Avg. Duration Winners', f"{strat_results['winner_holding_avg']}"),
             ('Avg. Duration Loser', f"{strat_results['loser_holding_avg']}"),
-            ('Max Consecutive Wins / Loss',
-             f"{strat_results['max_consecutive_wins']} / {strat_results['max_consecutive_losses']}"
-             if 'max_consecutive_losses' in strat_results else 'N/A'),
+            # ('Max Consecutive Wins / Loss',
+            #  f"{strat_results['max_consecutive_wins']} / {strat_results['max_consecutive_losses']}"
+            #  if 'max_consecutive_losses' in strat_results else 'N/A'),
             ('Rejected Entry signals', strat_results.get('rejected_signals', 'N/A')),
             ('Entry/Exit Timeouts',
              f"{strat_results.get('timedout_entry_orders', 'N/A')} / "
@@ -262,7 +262,7 @@ def text_table_add_metrics(strat_results: Dict) -> str:
             ('Max balance', fmt_coin(strat_results['csum_max'], strat_results['stake_currency'])),
 
             *drawdown_metrics,
-            ('Market change', f"{strat_results['market_change']:.2%}"),
+            # ('Market change', f"{strat_results['market_change']:.2%}"),
         ]
 
         return tabulate(metrics, headers=["Metric", "Value"], tablefmt="orgtbl")
