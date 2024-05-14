@@ -151,10 +151,10 @@ class FreqtradeBot(LoggingMixin):
                 "Consider either reducing the amount of work your strategy performs "
                 "or reduce the amount of pairs in the Pairlist."
             )
-            msg = f"Strategy analysis took {duration:.2f}s, more than 25% of the timeframe "
-                  f"({time_limit:.2f}s). This can lead to delayed orders and missed signals."
-                  "Consider either reducing the amount of work your strategy performs "
-                  "or reduce the amount of pairs in the Pairlist."
+            msg = (f"Strategy analysis took {duration:.2f}s, more than 25% of the timeframe "
+                   f"({time_limit:.2f}s). This can lead to delayed orders and missed signals."
+                   "Consider either reducing the amount of work your strategy performs "
+                   "or reduce the amount of pairs in the Pairlist.")
             self.rpc.send_msg({
                 'type': RPCMessageType.WARNING,
                 'status': msg,
