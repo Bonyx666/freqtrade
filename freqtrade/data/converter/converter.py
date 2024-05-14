@@ -134,7 +134,6 @@ def ohlcv_fill_up_missing_data(dataframe: DataFrame, timeframe: str, pair: str) 
     return df
 
 
-<<<<<<< HEAD
 def reduce_mem_usage(pair: str, dataframe: DataFrame) -> DataFrame:
     """ iterate through all the columns of a dataframe and modify the data type
         to reduce memory usage.
@@ -178,13 +177,9 @@ def reduce_mem_usage(pair: str, dataframe: DataFrame) -> DataFrame:
     return df
 
 
-def trim_dataframe(df: DataFrame, timerange, *, df_date_col: str = 'date',
-                   startup_candles: int = 0) -> DataFrame:
-=======
 def trim_dataframe(
     df: DataFrame, timerange, *, df_date_col: str = "date", startup_candles: int = 0
 ) -> DataFrame:
->>>>>>> b1fd79d720697f54014888874f11aa7befed7abe
     """
     Trim dataframe based on given timerange
     :param df: Dataframe to trim

@@ -349,15 +349,7 @@ class DataProvider:
         return total_candles
 
     def get_pair_dataframe(
-<<<<<<< HEAD
-        self,
-        pair: str,
-        timeframe: Optional[str] = None,
-        candle_type: str = '',
-        startup_candle_count: int = 0
-=======
         self, pair: str, timeframe: Optional[str] = None, candle_type: str = ""
->>>>>>> b1fd79d720697f54014888874f11aa7befed7abe
     ) -> DataFrame:
         """
         Return pair candle (OHLCV) data, either live or cached historical -- depending
