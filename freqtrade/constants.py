@@ -206,30 +206,6 @@ CONF_SCHEMA = {
             "type": "object",
             "patternProperties": {"^[0-9.]+$": {"type": "number"}},
         },
-<<<<<<< HEAD
-        'amount_reserve_percent': {'type': 'number', 'minimum': 0.0, 'maximum': 0.5},
-        'stoploss': {'type': 'number', 'maximum': 0, 'exclusiveMaximum': True},
-        'trailing_stop': {'type': 'boolean'},
-        'trailing_stop_positive': {'type': 'number', 'minimum': 0, 'maximum': 1},
-        'trailing_stop_positive_offset': {'type': 'number', 'minimum': 0, 'maximum': 100},
-        'trailing_only_offset_is_reached': {'type': 'boolean'},
-        'use_exit_signal': {'type': 'boolean'},
-        'exit_profit_only': {'type': 'boolean'},
-        'exit_profit_offset': {'type': 'number'},
-        'fee': {'type': 'number', 'minimum': 0, 'maximum': 0.1},
-        'ignore_roi_if_entry_signal': {'type': 'boolean'},
-        'ignore_buying_expired_candle_after': {'type': 'number'},
-        'trading_mode': {'type': 'string', 'enum': TRADING_MODES},
-        'margin_mode': {'type': 'string', 'enum': MARGIN_MODES},
-        'reduce_df_footprint': {'type': 'boolean', 'default': False},
-        'minimum_trade_amount': {'type': 'number', 'default': 10},
-        'targeted_trade_amount': {'type': 'number', 'default': 20},
-        'lookahead_analysis_exportfilename': {'type': 'string'},
-        'startup_candle': {
-            'type': 'array',
-            'uniqueItems': True,
-            'default': [199, 399, 499, 999, 1999],
-=======
         "amount_reserve_percent": {"type": "number", "minimum": 0.0, "maximum": 0.5},
         "stoploss": {"type": "number", "maximum": 0, "exclusiveMaximum": True},
         "trailing_stop": {"type": "boolean"},
@@ -252,7 +228,6 @@ CONF_SCHEMA = {
             "type": "array",
             "uniqueItems": True,
             "default": [199, 399, 499, 999, 1999],
->>>>>>> b1fd79d720697f54014888874f11aa7befed7abe
         },
         "liquidation_buffer": {"type": "number", "minimum": 0.0, "maximum": 0.99},
         "backtest_breakdown": {
@@ -464,7 +439,6 @@ CONF_SCHEMA = {
                 "webhookstatus": {"type": "object"},
             },
         },
-<<<<<<< HEAD
         'discord': {
             'type': 'object',
             'properties': {
@@ -573,50 +547,6 @@ CONF_SCHEMA = {
                     {"Message": "{msg}"},
                 ]},
             }
-=======
-        "discord": {
-            "type": "object",
-            "properties": {
-                "enabled": {"type": "boolean"},
-                "webhook_url": {"type": "string"},
-                "exit_fill": {
-                    "type": "array",
-                    "items": {"type": "object"},
-                    "default": [
-                        {"Trade ID": "{trade_id}"},
-                        {"Exchange": "{exchange}"},
-                        {"Pair": "{pair}"},
-                        {"Direction": "{direction}"},
-                        {"Open rate": "{open_rate}"},
-                        {"Close rate": "{close_rate}"},
-                        {"Amount": "{amount}"},
-                        {"Open date": "{open_date:%Y-%m-%d %H:%M:%S}"},
-                        {"Close date": "{close_date:%Y-%m-%d %H:%M:%S}"},
-                        {"Profit": "{profit_amount} {stake_currency}"},
-                        {"Profitability": "{profit_ratio:.2%}"},
-                        {"Enter tag": "{enter_tag}"},
-                        {"Exit Reason": "{exit_reason}"},
-                        {"Strategy": "{strategy}"},
-                        {"Timeframe": "{timeframe}"},
-                    ],
-                },
-                "entry_fill": {
-                    "type": "array",
-                    "items": {"type": "object"},
-                    "default": [
-                        {"Trade ID": "{trade_id}"},
-                        {"Exchange": "{exchange}"},
-                        {"Pair": "{pair}"},
-                        {"Direction": "{direction}"},
-                        {"Open rate": "{open_rate}"},
-                        {"Amount": "{amount}"},
-                        {"Open date": "{open_date:%Y-%m-%d %H:%M:%S}"},
-                        {"Enter tag": "{enter_tag}"},
-                        {"Strategy": "{strategy} {timeframe}"},
-                    ],
-                },
-            },
->>>>>>> b1fd79d720697f54014888874f11aa7befed7abe
         },
         "api_server": {
             "type": "object",
