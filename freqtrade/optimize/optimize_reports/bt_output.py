@@ -256,7 +256,7 @@ def text_table_add_metrics(strat_results: Dict) -> str:
             ("Max open trades", strat_results["max_open_trades"]),
             ("", ""),  # Empty line to improve readability
             ("Total/Daily Avg Trades",
-                f"{strat_results["total_trades"]} / {strat_results["trades_per_day"]}"),
+                f"{strat_results['total_trades']} / {strat_results['trades_per_day']}"),
 
             ("Starting balance", fmt_coin(strat_results["starting_balance"],
                                           strat_results["stake_currency"])),
@@ -264,7 +264,7 @@ def text_table_add_metrics(strat_results: Dict) -> str:
                                        strat_results["stake_currency"])),
             ("Absolute profit ", fmt_coin(strat_results["profit_total_abs"],
                                           strat_results["stake_currency"])),
-            ("Total profit %", f"{strat_results["profit_total"]:.2%}"),
+            ("Total profit %", f"{strat_results['profit_total']:.2%}"),
             # ("CAGR %", f"{strat_results["cagr"]:.2%}" if "cagr" in strat_results else "N/A"),
             # ("Sortino", f"{strat_results["sortino"]:.2f}" if "sortino" in strat_results else "N/A"),
             # ("Sharpe", f"{strat_results["sharpe"]:.2f}" if "sharpe" in strat_results else "N/A"),
@@ -295,17 +295,17 @@ def text_table_add_metrics(strat_results: Dict) -> str:
             #                       strat_results["stake_currency"])),
             # ("Worst day", fmt_coin(strat_results["backtest_worst_day_abs"],
             #                        strat_results["stake_currency"])),
-            ("Days win/draw/lose", f"{strat_results["winning_days"]} / "
-                f"{strat_results["draw_days"]} / {strat_results["losing_days"]}"),
-            ("Avg. Duration Winners", f"{strat_results["winner_holding_avg"]}"),
-            ("Avg. Duration Loser", f"{strat_results["loser_holding_avg"]}"),
+            ("Days win/draw/lose", f"{strat_results['winning_days']} / "
+                f"{strat_results['draw_days']} / {strat_results['losing_days']}"),
+            ("Avg. Duration Winners", f"{strat_results['winner_holding_avg']}"),
+            ("Avg. Duration Loser", f"{strat_results['loser_holding_avg']}"),
             # ("Max Consecutive Wins / Loss",
             #  f"{strat_results["max_consecutive_wins"]} / {strat_results["max_consecutive_losses"]}"
             #  if "max_consecutive_losses" in strat_results else "N/A"),
             ("Rejected Entry signals", strat_results.get("rejected_signals", "N/A")),
             ("Entry/Exit Timeouts",
-             f"{strat_results.get("timedout_entry_orders", "N/A")} / "
-             f"{strat_results.get("timedout_exit_orders", "N/A")}"),
+             f"{strat_results.get('timedout_entry_orders', 'N/A')} / "
+             f"{strat_results.get('timedout_exit_orders', 'N/A')}"),
             *entry_adjustment_metrics,
             ("", ""),  # Empty line to improve readability
             ("Min balance", fmt_coin(strat_results["csum_min"], strat_results["stake_currency"])),
