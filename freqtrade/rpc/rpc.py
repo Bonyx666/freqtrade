@@ -19,8 +19,14 @@ from freqtrade import __version__
 from freqtrade.configuration.timerange import TimeRange
 from freqtrade.constants import CANCEL_REASON, DEFAULT_DATAFRAME_COLUMNS, Config
 from freqtrade.data.history import load_data
-from freqtrade.data.metrics import (calculate_calmar, calculate_expectancy,
-                                    calculate_max_drawdown, calculate_sharpe, calculate_sortino)
+from freqtrade.data.metrics import (
+    DrawDownResult,
+    calculate_calmar,
+    calculate_expectancy,
+    calculate_max_drawdown,
+    calculate_sharpe,
+    calculate_sortino,
+)
 from freqtrade.enums import (
     CandleType,
     ExitCheckTuple,
@@ -28,7 +34,7 @@ from freqtrade.enums import (
     MarketDirection,
     SignalDirection,
     State,
-    TradingMode
+    TradingMode,
 )
 from freqtrade.exceptions import ExchangeError, PricingError
 from freqtrade.exchange import timeframe_to_minutes, timeframe_to_msecs
@@ -266,9 +272,9 @@ class RPC:
                         open_orders=oo_details
                     )
                 )
-                cp_cfg = self._config
-                trade_dict['position_adjustment_enable'] = cp_cfg['position_adjustment_enable']
-                trade_dict['max_entry_position_adjustment'] = cp_cfg['max_entry_position_adjustment']
+                cfg = self._config
+                trade_dict['position_adjustment_enable'] = cfg['position_adjustment_enable']
+                trade_dict['max_entry_position_adjustment'] = cfg['max_entry_position_adjustment']
                 results.append(trade_dict)
             return results
 
@@ -606,21 +612,10 @@ class RPC:
 
         expectancy, expectancy_ratio = calculate_expectancy(trades_df)
 
-        max_drawdown_abs = 0.0
-        max_drawdown = 0.0
-        drawdown_start: Optional[datetime] = None
-        drawdown_end: Optional[datetime] = None
-        dd_high_val = dd_low_val = 0.0
+        drawdown = DrawDownResult()
         if len(trades_df) > 0:
             try:
-                (
-                    max_drawdown_abs,
-                    drawdown_start,
-                    drawdown_end,
-                    dd_high_val,
-                    dd_low_val,
-                    max_drawdown,
-                ) = calculate_max_drawdown(
+                drawdown = calculate_max_drawdown(
                     trades_df,
                     value_col="profit_abs",
                     date_col="close_date_dt",
@@ -680,14 +675,14 @@ class RPC:
             "winrate": winrate,
             "expectancy": expectancy,
             "expectancy_ratio": expectancy_ratio,
-            "max_drawdown": max_drawdown,
-            "max_drawdown_abs": max_drawdown_abs,
-            "max_drawdown_start": format_date(drawdown_start),
-            "max_drawdown_start_timestamp": dt_ts_def(drawdown_start),
-            "max_drawdown_end": format_date(drawdown_end),
-            "max_drawdown_end_timestamp": dt_ts_def(drawdown_end),
-            "drawdown_high": dd_high_val,
-            "drawdown_low": dd_low_val,
+            "max_drawdown": drawdown.relative_account_drawdown,
+            "max_drawdown_abs": drawdown.drawdown_abs,
+            "max_drawdown_start": format_date(drawdown.high_date),
+            "max_drawdown_start_timestamp": dt_ts_def(drawdown.high_date),
+            "max_drawdown_end": format_date(drawdown.low_date),
+            "max_drawdown_end_timestamp": dt_ts_def(drawdown.low_date),
+            "drawdown_high": drawdown.high_value,
+            "drawdown_low": drawdown.low_value,
             "trading_volume": trading_volume,
             "sortino": sortino,
             "sharpe": sharpe,

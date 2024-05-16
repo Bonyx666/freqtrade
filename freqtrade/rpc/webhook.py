@@ -137,4 +137,4 @@ class Webhook(RPCHandler):
                         headers={"Content-Type": "text/plain"},
                         timeout=timeout)
         else:
-            raise NotImplementedError("Unknown format: {}".format(self._format))
+            raise NotImplementedError(f"Unknown format: {self._format}")

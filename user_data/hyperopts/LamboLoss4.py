@@ -4,14 +4,16 @@ MaxDrawDownHyperOptLoss
 This module defines the alternative HyperOptLoss class which can be used for
 Hyperoptimization.
 """
+import math
 from datetime import datetime
+
 import numpy as np
 from pandas import DataFrame
 
 from freqtrade.constants import Config
-from freqtrade.data.metrics import calculate_expectancy, calculate_max_drawdown
+from freqtrade.data.metrics import calculate_expectancy
 from freqtrade.optimize.hyperopt import IHyperOptLoss
-import math
+
 
 # Set maximum expectancy used in the calculation
 max_expectancy = 2
@@ -22,8 +24,8 @@ class LamboLoss4(IHyperOptLoss):
 
     """
     Defines the loss function for hyperopt.
-    
-    Important params: expectancy ratio, profit factor, avg profit %, total trades and square root of avg trade duration
+
+    Important params: exp ratio, profit factor, avg profit %, total trades and sqrt of trade dur
     """
 
     @staticmethod
@@ -40,7 +42,6 @@ class LamboLoss4(IHyperOptLoss):
         # total_profit = results['profit_abs'].sum()
 
         starting_balance = config['dry_run_wallet']
-        stake_amount = config['stake_amount']
         max_profit_abs = (max_avg_profit / 100) * results['stake_amount']
 
         strict_profit_abs = np.minimum(max_profit_abs, results['profit_abs'])
@@ -63,10 +64,11 @@ class LamboLoss4(IHyperOptLoss):
         trade_duration = results['trade_duration'].mean()
         if trade_duration == 0:
             trade_duration = 1
-        # if (nb_loss_trades == 0):
-        #     return -total_profit * 100
-        
-        loss_value = total_profit * min(average_profit, max_avg_profit) * min(profit_factor, max_profit_ratio) * min(expectancy_ratio, max_expectancy) * total_trades / math.sqrt(max(trade_duration, 5))
+
+        loss_value = (total_profit * min(average_profit, max_avg_profit) *
+                      min(profit_factor, max_profit_ratio) *
+                      min(expectancy_ratio, max_expectancy) *
+                      total_trades / math.sqrt(max(trade_duration, 5)))
 
         if (total_profit < 0) and (loss_value > 0):
             return loss_value
