@@ -179,8 +179,8 @@ class FreqtradeBot(LoggingMixin):
 
         def log_took_too_long(duration: float, time_limit: float):
             logger.warning(
-                f"Strategy analysis took {duration:.2f}, which is 25% of the timeframe. "
-                "This can lead to delayed orders and missed signals."
+                f"Strategy analysis took {duration:.2f}s, more than 25% of the timeframe "
+                f"({time_limit:.2f}s). This can lead to delayed orders and missed signals."
                 "Consider either reducing the amount of work your strategy performs "
                 "or reduce the amount of pairs in the Pairlist."
             )
@@ -195,7 +195,8 @@ class FreqtradeBot(LoggingMixin):
 
         self._measure_execution = MeasureTime(log_took_too_long, timeframe_secs * 0.25)
 
-    def notify_status(self, msg: str, msg_type=RPCMessageType.STATUS, strategy_version: str = '') -> None:
+    def notify_status(self, msg: str, msg_type=RPCMessageType.STATUS,
+                      strategy_version: str = '') -> None:
         """
         Public method for users of this class (worker, etc.) to send notifications
         via RPC about changes in the bot status.
@@ -791,7 +792,8 @@ class FreqtradeBot(LoggingMixin):
 
             remaining = (trade.amount - amount) * current_exit_rate
             if min_exit_stake and remaining != 0 and remaining < min_exit_stake:
-                msg = f"Trade #{trade.id} ({trade.pair}) - Remaining amount of {remaining} would be smaller than the minimum of {min_exit_stake}. Exit aborted."
+                msg = (f"Trade #{trade.id} ({trade.pair}) - Remaining amount of {remaining} "
+                       f"would be smaller than the minimum of {min_exit_stake}. Exit aborted.")
                 logger.info(msg)
 
                 self.send_dp_message(msg)
@@ -1544,7 +1546,7 @@ class FreqtradeBot(LoggingMixin):
                     order = self.exchange.fetch_order(open_order.order_id, trade.pair)
 
                 except (ExchangeError):
-                    msg = "Cannot query order for {} due to {}".format(trade, traceback.format_exc())
+                    msg = f"Cannot query order for {trade} due to {traceback.format_exc()}"
                     logger.info(msg)
                     self.send_dp_message(msg)
                     continue
@@ -1580,7 +1582,8 @@ class FreqtradeBot(LoggingMixin):
             canceled_count = trade.get_canceled_exit_order_count()
             max_timeouts = self.config.get("unfilledtimeout", {}).get("exit_timeout_count", 0)
             if (canceled and max_timeouts > 0 and canceled_count >= max_timeouts):
-                msg = f"Emergency exiting trade {trade}, as the exit order timed out {max_timeouts} times. force selling {order['amount']}."
+                msg = (f"Emergency exiting trade {trade}, as the exit order timed out "
+                       f"{max_timeouts} times. force selling {order['amount']}.")
                 logger.warning(msg)
                 self.send_dp_message(msg)
                 self.emergency_exit(trade, order["price"], order["amount"])

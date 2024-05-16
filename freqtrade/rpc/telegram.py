@@ -476,7 +476,7 @@ class Telegram(RPCHandler):
             message += (f"*Exit Rate:* `{fmt_coin(msg['close_rate'], msg['quote_currency'])}`\n"
                         f"*Min Profit:* `{msg['min_profit']:.2%}`\n"
                         f"*Max Profit:* `{msg['max_profit']:.2%}`\n")
-        
+
         if is_sub_trade:
             stake_amount_fiat = self.__format_profit_fiat(msg, "stake_amount")
 
