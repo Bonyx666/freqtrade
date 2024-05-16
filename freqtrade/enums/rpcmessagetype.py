@@ -24,7 +24,7 @@ class RPCMessageType(str, Enum):
     ANALYZED_DF = "analyzed_df"
     NEW_CANDLE = "new_candle"
 
-    WALLET = 'wallet'
+    WALLET = "wallet"
 
     def __repr__(self):
         return self.value

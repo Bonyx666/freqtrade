@@ -269,12 +269,12 @@ class RPC:
                         stoploss_current_dist_pct=round(stoploss_current_dist_ratio * 100, 2),
                         stoploss_entry_dist=stoploss_entry_dist,
                         stoploss_entry_dist_ratio=round(stoploss_entry_dist_ratio, 8),
-                        open_orders=oo_details
+                        open_orders=oo_details,
                     )
                 )
                 cfg = self._config
-                trade_dict['position_adjustment_enable'] = cfg['position_adjustment_enable']
-                trade_dict['max_entry_position_adjustment'] = cfg['max_entry_position_adjustment']
+                trade_dict["position_adjustment_enable"] = cfg["position_adjustment_enable"]
+                trade_dict["max_entry_position_adjustment"] = cfg["max_entry_position_adjustment"]
                 results.append(trade_dict)
             return results
 
@@ -334,8 +334,8 @@ class RPC:
                     f"{trade.id} {direction_str}",
                     trade.pair + active_attempt_side_symbols_str,
                     shorten_date(dt_humanize_delta(trade.open_date_utc)),
-                    f'{trade.min_profit:.2%}',
-                    f'{trade.max_profit:.2%}',
+                    f"{trade.min_profit:.2%}",
+                    f"{trade.max_profit:.2%}",
                     profit_str,
                 ]
 
@@ -352,13 +352,7 @@ class RPC:
             else:
                 profitcol += " (" + stake_currency + ")"
 
-            columns = [
-                "ID L/S" if nonspot else "ID",
-                "Pair",
-                "Since",
-                "Min %",
-                "Max %",
-                profitcol]
+            columns = ["ID L/S" if nonspot else "ID", "Pair", "Since", "Min %", "Max %", profitcol]
             if self._config.get("position_adjustment_enable", False):
                 columns.append("# Entries")
             return trades_list, columns, fiat_profit_sum
@@ -603,7 +597,7 @@ class RPC:
                     "close_date": format_date(trade.close_date),
                     "close_date_dt": trade.close_date,
                     "profit_abs": trade.close_profit_abs,
-                    'profit_ratio': trade.close_profit,
+                    "profit_ratio": trade.close_profit,
                 }
                 for trade in trades
                 if not trade.is_open and trade.close_date

@@ -90,8 +90,9 @@ class Worker:
         # Log state transition
         if state != old_state:
             if old_state != State.RELOAD_CONFIG:
-                self.freqtrade.notify_status(f"{state.name.lower()}",
-                                             strategy_version=self.freqtrade.strategy.version())
+                self.freqtrade.notify_status(
+                    f"{state.name.lower()}", strategy_version=self.freqtrade.strategy.version()
+                )
 
             logger.info(
                 f"Changing state{f' from {old_state.name}' if old_state else ''} to: {state.name}"

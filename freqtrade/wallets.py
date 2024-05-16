@@ -36,7 +36,9 @@ class PositionWallet(NamedTuple):
 
 
 class Wallets:
-    def __init__(self, config: Config, exchange: Exchange, is_backtest: bool = False, rpc = None) -> None:
+    def __init__(
+        self, config: Config, exchange: Exchange, is_backtest: bool = False, rpc=None
+    ) -> None:
         self._config = config
         self._is_backtest = is_backtest
         self._exchange = exchange
@@ -45,10 +47,11 @@ class Wallets:
         self._positions: Dict[str, PositionWallet] = {}
         self.start_cap = config["dry_run_wallet"]
         self._last_wallet_refresh: Optional[datetime] = None
-        
-        self._default_timeframe = self._config.get('timeframe', '1h')
+
+        self._default_timeframe = self._config.get("timeframe", "1h")
         self.__msg_cache = PeriodicCache(
-            maxsize=1000, ttl=timeframe_to_seconds(self._default_timeframe))
+            maxsize=1000, ttl=timeframe_to_seconds(self._default_timeframe)
+        )
 
         self.update()
 
@@ -357,7 +360,7 @@ class Wallets:
                 msg = f"Minimum stake amount > available balance. {min_stake_amount} > {max_allowed_stake}"
                 logger.warning(msg)
                 self.send_dp_message(msg)
-                
+
             return 0
         if min_stake_amount is not None and stake_amount < min_stake_amount:
             if not self._is_backtest:
@@ -387,8 +390,10 @@ class Wallets:
 
     def send_dp_message(self, msg: str) -> None:
         if msg not in self.__msg_cache:
-            self.__rpc.send_msg({
-                'type': RPCMessageType.WALLET,
-                'msg': msg,
-            })
+            self.__rpc.send_msg(
+                {
+                    "type": RPCMessageType.WALLET,
+                    "msg": msg,
+                }
+            )
         self.__msg_cache[msg] = True

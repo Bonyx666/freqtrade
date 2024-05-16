@@ -104,12 +104,16 @@ def version():
 
 
 @router.get("/balance", response_model=Balances, tags=["info"])
-def balance(fiat_display_currency: str = "", rpc: RPC = Depends(get_rpc),
-            config=Depends(get_config)):
+def balance(
+    fiat_display_currency: str = "", rpc: RPC = Depends(get_rpc), config=Depends(get_config)
+):
     """Account Balances"""
     if fiat_display_currency == "":
         fiat_display_currency = config.get("fiat_display_currency", "")
-    return rpc._rpc_balance(config["stake_currency"], fiat_display_currency,)
+    return rpc._rpc_balance(
+        config["stake_currency"],
+        fiat_display_currency,
+    )
 
 
 @router.get("/count", response_model=Count, tags=["info"])
@@ -144,9 +148,9 @@ def profit(timescale: int = 0, rpc: RPC = Depends(get_rpc), config=Depends(get_c
         timescale = timescale - 1
         today_start = datetime.combine(date.today(), datetime.min.time())
         start_date = today_start - timedelta(days=timescale)
-    return rpc._rpc_trade_statistics(config["stake_currency"],
-                                     config.get("fiat_display_currency"),
-                                     start_date)
+    return rpc._rpc_trade_statistics(
+        config["stake_currency"], config.get("fiat_display_currency"), start_date
+    )
 
 
 @router.get("/stats", response_model=Stats, tags=["info"])
@@ -183,20 +187,20 @@ def status(rpc: RPC = Depends(get_rpc)):
         return []
 
 
-@router.get('/trade_detail/{tradeid}', tags=['info', 'trading'])
+@router.get("/trade_detail/{tradeid}", tags=["info", "trading"])
 def trade_detail(tradeid: int = 0, rpc: RPC = Depends(get_rpc)):
     try:
         return rpc._rpc_trade_status([tradeid])[0]
 
         import json
         from freqtrade.persistence import Trade, init_db
-        
-        config=Depends(get_config)
 
-        if 'db_url' not in config:
-            return ''
+        config = Depends(get_config)
 
-        init_db(config['db_url'])
+        if "db_url" not in config:
+            return ""
+
+        init_db(config["db_url"])
         tfilter = []
 
         tfilter.append(Trade.id.in_(tradeid))
@@ -204,14 +208,15 @@ def trade_detail(tradeid: int = 0, rpc: RPC = Depends(get_rpc)):
         trades = Trade.get_trades(tfilter).all()
         return trades[0].to_json()
     except (RPCException, KeyError):
-        raise HTTPException(status_code=404, detail='Trade not found.')
+        raise HTTPException(status_code=404, detail="Trade not found.")
 
 
 # Using the responsemodel here will cause a ~100% increase in response time (from 1s to 2s)
 # on big databases. Correct response model: response_model=TradeResponse,
 @router.get("/trades", tags=["info", "trading"])
-def trades(limit: int = 500, offset: int = 0, order_by_id: bool = True,
-           rpc: RPC = Depends(get_rpc)):
+def trades(
+    limit: int = 500, offset: int = 0, order_by_id: bool = True, rpc: RPC = Depends(get_rpc)
+):
     return rpc._rpc_trade_history(limit, offset=offset, order_by_id=order_by_id)
 
 

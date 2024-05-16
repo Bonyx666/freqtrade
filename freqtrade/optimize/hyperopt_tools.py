@@ -375,24 +375,50 @@ class HyperoptTools:
         # New mode, using backtest result for metrics
         trials["results_metrics.winsdrawslosses"] = trials.apply(
             lambda x: generate_wins_draws_losses(
-                            x['results_metrics.wins'], x['results_metrics.draws'],
-                            x['results_metrics.losses']
-                      ), axis=1)
+                x["results_metrics.wins"], x["results_metrics.draws"], x["results_metrics.losses"]
+            ),
+            axis=1,
+        )
 
-        trials = trials[['Best', 'current_epoch', 'results_metrics.total_trades',
-                         'results_metrics.winsdrawslosses',
-                         'results_metrics.profit_mean', 'results_metrics.profit_total_abs',
-                         'results_metrics.profit_total', 'results_metrics.holding_avg',
-                         'results_metrics.max_drawdown',
-                         'results_metrics.max_drawdown_account', 'results_metrics.max_drawdown_abs',
-                         'loss', 'is_initial_point', 'is_random', 'is_best',
-                         'results_metrics.expectancy_ratio']]
+        trials = trials[
+            [
+                "Best",
+                "current_epoch",
+                "results_metrics.total_trades",
+                "results_metrics.winsdrawslosses",
+                "results_metrics.profit_mean",
+                "results_metrics.profit_total_abs",
+                "results_metrics.profit_total",
+                "results_metrics.holding_avg",
+                "results_metrics.max_drawdown",
+                "results_metrics.max_drawdown_account",
+                "results_metrics.max_drawdown_abs",
+                "loss",
+                "is_initial_point",
+                "is_random",
+                "is_best",
+                "results_metrics.expectancy_ratio",
+            ]
+        ]
 
         trials.columns = [
-            'Best', 'Epoch', 'Trades', ' Win  Draw  Loss  Win%', 'Avg profit',
-            'Total profit', 'Profit', 'Avg duration', 'max_drawdown', 'max_drawdown_account',
-            'max_drawdown_abs', 'Objective', 'is_initial_point', 'is_random', 'is_best',
-            'Expectancy Ratio']
+            "Best",
+            "Epoch",
+            "Trades",
+            " Win  Draw  Loss  Win%",
+            "Avg profit",
+            "Total profit",
+            "Profit",
+            "Avg duration",
+            "max_drawdown",
+            "max_drawdown_account",
+            "max_drawdown_abs",
+            "Objective",
+            "is_initial_point",
+            "is_random",
+            "is_best",
+            "Expectancy Ratio",
+        ]
 
         return trials
 
@@ -448,32 +474,32 @@ class HyperoptTools:
 
         stake_currency = config["stake_currency"]
 
-        trials['Expectancy Ratio'] = trials['Expectancy Ratio'].apply(
-            lambda x: f'{x:6.3f}'
-        )
+        trials["Expectancy Ratio"] = trials["Expectancy Ratio"].apply(lambda x: f"{x:6.3f}")
 
         trials[f"Max Drawdown{' (Acct)' if has_account_drawdown else ''}"] = trials.apply(
             lambda x: "{} {}".format(
-                fmt_coin(x['max_drawdown_abs'], stake_currency, keep_trailing_zeros=True),
-                (f"({x['max_drawdown_account']:,.2%})"
+                fmt_coin(x["max_drawdown_abs"], stake_currency, keep_trailing_zeros=True),
+                (
+                    f"({x['max_drawdown_account']:,.2%})"
                     if has_account_drawdown
                     else f"({x['max_drawdown']:,.2%})"
-                 ).rjust(7, ' ')
+                ).rjust(7, " "),
             ).rjust(20 + len(stake_currency))
-            if x['max_drawdown'] != 0.0 or x['max_drawdown_account'] != 0.0
-            else '--'.rjust(20 + len(stake_currency)),
-            axis=1
+            if x["max_drawdown"] != 0.0 or x["max_drawdown_account"] != 0.0
+            else "--".rjust(20 + len(stake_currency)),
+            axis=1,
         )
 
-        trials = trials.drop(columns=['max_drawdown_abs', 'max_drawdown', 'max_drawdown_account'])
+        trials = trials.drop(columns=["max_drawdown_abs", "max_drawdown", "max_drawdown_account"])
 
-        trials['Profit'] = trials.apply(
-            lambda x: '{} {}'.format(
-                fmt_coin(x['Total profit'], stake_currency, keep_trailing_zeros=True),
-                f"({x['Profit']:,.2%})".rjust(7, ' ')
+        trials["Profit"] = trials.apply(
+            lambda x: "{} {}".format(
+                fmt_coin(x["Total profit"], stake_currency, keep_trailing_zeros=True),
+                f"({x['Profit']:,.2%})".rjust(7, " "),
             ).rjust(20 + len(stake_currency))
-            if x['Total profit'] != 0.0 else '--'.rjust(20 + len(stake_currency)),
-            axis=1
+            if x["Total profit"] != 0.0
+            else "--".rjust(20 + len(stake_currency)),
+            axis=1,
         )
         trials = trials.drop(columns=["Total profit"])
 

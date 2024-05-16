@@ -33,22 +33,22 @@ class Discord(Webhook):
     def send_msg(self, msg) -> None:
         send_message = False
         msg["bot_name"] = self.bot_name
-        if (msg["type"].value == "strategy_msg"):
+        if msg["type"].value == "strategy_msg":
             send_message, title, color, fields = self.prepare_strategy_msg(msg)
 
-        elif (msg["type"].value in ["status", "warning"]):
+        elif msg["type"].value in ["status", "warning"]:
             send_message, title, color, fields = self.prepare_status_warning_msg(msg)
 
-        elif (msg["type"].value in ["entry_cancel", "exit_cancel"]):
+        elif msg["type"].value in ["entry_cancel", "exit_cancel"]:
             send_message, title, color, fields = self.prepare_entry_exit_cancel_msg(msg)
 
-        elif ((msg["type"].value in self._config["discord"])
-              and (("enabled" not in self._config["discord"][msg["type"].value])
-                   or (self._config["discord"][msg["type"].value]["enabled"] is True))):
+        elif (msg["type"].value in self._config["discord"]) and (
+            ("enabled" not in self._config["discord"][msg["type"].value])
+            or (self._config["discord"][msg["type"].value]["enabled"] is True)
+        ):
             send_message, title, color, fields = self.prepare_entry_exit_filled_msg(msg)
 
-        elif (msg["type"].value in ["wallet"]):
-
+        elif msg["type"].value in ["wallet"]:
             fields = self._config["discord"].get("rows_wallet")
 
             color = 0xFF0000
@@ -57,16 +57,17 @@ class Discord(Webhook):
             send_message = True
 
         if send_message:
-            embeds = [{
-                "title": title,
-                "color": color,
-                "fields": [],
-
-            }]
+            embeds = [
+                {
+                    "title": title,
+                    "color": color,
+                    "fields": [],
+                }
+            ]
             for f in fields:
                 for k, v in f.items():
-                    if (k == "Leverage"):
-                        if msg.get('leverage', 1.0) == 1.0:
+                    if k == "Leverage":
+                        if msg.get("leverage", 1.0) == 1.0:
                             continue
                     v = v.format(**msg)
                     embeds[0]["fields"].append({"name": k, "value": v, "inline": True})
@@ -92,12 +93,12 @@ class Discord(Webhook):
         msg["timeframe"] = self.timeframe
         msg["exchange"] = self._config["exchange"]["name"]
 
-        if ("strategy_version" not in msg):
+        if "strategy_version" not in msg:
             msg["strategy_version"] = ""
         fields = self._config["discord"].get("rows_status")
 
         color = 0x008000
-        if (msg["status"] != "running"):
+        if msg["status"] != "running":
             color = 0xFF0000
         title = msg["bot_name"] + " - " + msg["type"].value
 
@@ -128,22 +129,28 @@ class Discord(Webhook):
             fields = self._config["discord"][msg["type"].value].get("rows_sub_trade")
 
         color = 0x0000FF
-        if ((msg["type"] in (RPCMessageType.ENTRY, RPCMessageType.ENTRY_FILL))
-            and msg["sub_trade"]):
+        if (msg["type"] in (RPCMessageType.ENTRY, RPCMessageType.ENTRY_FILL)) and msg["sub_trade"]:
             color = 0x00FFFF
 
         if msg["type"] in (RPCMessageType.EXIT, RPCMessageType.EXIT_FILL):
             profit_ratio = msg.get("profit_ratio")
-            color = ((0x00FF00 if profit_ratio > 0 else 0xFF00FF) if msg["sub_trade"]
-                        else (0x008000 if profit_ratio > 0 else 0xFF0000))
+            color = (
+                (0x00FF00 if profit_ratio > 0 else 0xFF00FF)
+                if msg["sub_trade"]
+                else (0x008000 if profit_ratio > 0 else 0xFF0000)
+            )
 
         title = msg["type"].value
         if "pair" in msg:
-            title = (f"{msg['bot_name']} - Trade #{msg['trade_id']}: "
-                     f"{msg['pair']} {msg['type'].value}")
-        if ('pair' in msg) and msg['sub_trade']:
-            title = (f"{msg['bot_name']} - Trade #{msg['trade_id']}: "
-                     f"{msg['pair']} sub_{msg['type'].value}")
+            title = (
+                f"{msg['bot_name']} - Trade #{msg['trade_id']}: "
+                f"{msg['pair']} {msg['type'].value}"
+            )
+        if ("pair" in msg) and msg["sub_trade"]:
+            title = (
+                f"{msg['bot_name']} - Trade #{msg['trade_id']}: "
+                f"{msg['pair']} sub_{msg['type'].value}"
+            )
 
         send_message = True
 

@@ -135,8 +135,8 @@ def ohlcv_fill_up_missing_data(dataframe: DataFrame, timeframe: str, pair: str) 
 
 
 def reduce_mem_usage(pair: str, dataframe: DataFrame) -> DataFrame:
-    """ iterate through all the columns of a dataframe and modify the data type
-        to reduce memory usage.
+    """iterate through all the columns of a dataframe and modify the data type
+    to reduce memory usage.
     """
     df = dataframe.copy()
 
@@ -168,7 +168,7 @@ def reduce_mem_usage(pair: str, dataframe: DataFrame) -> DataFrame:
             # else:
             #     logger.info(f"Column not optimized because the type is {str(col_type)}")
         # else:
-            # df[col] = df[col].astype('category')
+        # df[col] = df[col].astype('category')
 
     # end_mem = df.memory_usage().sum() / 1024**2
     # logger.info("Memory usage after optimization is: {:.2f} MB".format(end_mem))

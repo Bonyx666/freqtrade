@@ -175,7 +175,8 @@ class FreqtradeBot(LoggingMixin):
         self.protections = ProtectionManager(self.config, self.strategy.protections)
 
         self.__msg_cache = PeriodicCache(
-            maxsize=1000, ttl=timeframe_to_seconds(self.config['timeframe']))
+            maxsize=1000, ttl=timeframe_to_seconds(self.config["timeframe"])
+        )
 
         def log_took_too_long(duration: float, time_limit: float):
             logger.warning(
@@ -184,28 +185,35 @@ class FreqtradeBot(LoggingMixin):
                 "Consider either reducing the amount of work your strategy performs "
                 "or reduce the amount of pairs in the Pairlist."
             )
-            msg = (f"Strategy analysis took {duration:.2f}s, more than 25% of the timeframe "
-                   f"({time_limit:.2f}s). This can lead to delayed orders and missed signals."
-                   "Consider either reducing the amount of work your strategy performs "
-                   "or reduce the amount of pairs in the Pairlist.")
-            self.rpc.send_msg({
-                'type': RPCMessageType.WARNING,
-                'status': msg,
-            })
+            msg = (
+                f"Strategy analysis took {duration:.2f}s, more than 25% of the timeframe "
+                f"({time_limit:.2f}s). This can lead to delayed orders and missed signals."
+                "Consider either reducing the amount of work your strategy performs "
+                "or reduce the amount of pairs in the Pairlist."
+            )
+            self.rpc.send_msg(
+                {
+                    "type": RPCMessageType.WARNING,
+                    "status": msg,
+                }
+            )
 
         self._measure_execution = MeasureTime(log_took_too_long, timeframe_secs * 0.25)
 
-    def notify_status(self, msg: str, msg_type=RPCMessageType.STATUS,
-                      strategy_version: str = '') -> None:
+    def notify_status(
+        self, msg: str, msg_type=RPCMessageType.STATUS, strategy_version: str = ""
+    ) -> None:
         """
         Public method for users of this class (worker, etc.) to send notifications
         via RPC about changes in the bot status.
         """
-        self.rpc.send_msg({
-            "type": msg_type,
-            "status": msg,
-            "strategy_version": strategy_version if strategy_version else '',
-        })
+        self.rpc.send_msg(
+            {
+                "type": msg_type,
+                "status": msg,
+                "strategy_version": strategy_version if strategy_version else "",
+            }
+        )
 
     def cleanup(self) -> None:
         """
@@ -792,8 +800,10 @@ class FreqtradeBot(LoggingMixin):
 
             remaining = (trade.amount - amount) * current_exit_rate
             if min_exit_stake and remaining != 0 and remaining < min_exit_stake:
-                msg = (f"Trade #{trade.id} ({trade.pair}) - Remaining amount of {remaining} "
-                       f"would be smaller than the minimum of {min_exit_stake}. Exit aborted.")
+                msg = (
+                    f"Trade #{trade.id} ({trade.pair}) - Remaining amount of {remaining} "
+                    f"would be smaller than the minimum of {min_exit_stake}. Exit aborted."
+                )
                 logger.info(msg)
 
                 self.send_dp_message(msg)
@@ -1265,7 +1275,7 @@ class FreqtradeBot(LoggingMixin):
                         continue
 
                 except InvalidOrderException as exception:
-                    msg = f'Unable to handle stoploss on exchange for {trade.pair}: {exception}'
+                    msg = f"Unable to handle stoploss on exchange for {trade.pair}: {exception}"
                     self.send_dp_message(msg)
 
                     logger.warning(msg)
@@ -1274,7 +1284,7 @@ class FreqtradeBot(LoggingMixin):
                     trades_closed += 1
 
             except DependencyException as exception:
-                msg = f'Unable to exit trade {trade.pair}: {exception}'
+                msg = f"Unable to exit trade {trade.pair}: {exception}"
                 self.send_dp_message(msg)
 
                 logger.warning(msg)
@@ -1378,7 +1388,7 @@ class FreqtradeBot(LoggingMixin):
         except InvalidOrderException as e:
             logger.error(f"Unable to place a stoploss order on exchange. {e}")
             logger.warning("Exiting the trade forcefully")
-            msg = f'Unable to place a stoploss order on exchange. {e}. Exiting the trade forcefully'
+            msg = f"Unable to place a stoploss order on exchange. {e}. Exiting the trade forcefully"
             self.send_dp_message(msg)
             self.emergency_exit(trade, stop_price)
 
@@ -1545,7 +1555,7 @@ class FreqtradeBot(LoggingMixin):
                 try:
                     order = self.exchange.fetch_order(open_order.order_id, trade.pair)
 
-                except (ExchangeError):
+                except ExchangeError:
                     msg = f"Cannot query order for {trade} due to {traceback.format_exc()}"
                     logger.info(msg)
                     self.send_dp_message(msg)
@@ -1581,9 +1591,11 @@ class FreqtradeBot(LoggingMixin):
             canceled = self.handle_cancel_exit(trade, order, order_obj, reason)
             canceled_count = trade.get_canceled_exit_order_count()
             max_timeouts = self.config.get("unfilledtimeout", {}).get("exit_timeout_count", 0)
-            if (canceled and max_timeouts > 0 and canceled_count >= max_timeouts):
-                msg = (f"Emergency exiting trade {trade}, as the exit order timed out "
-                       f"{max_timeouts} times. force selling {order['amount']}.")
+            if canceled and max_timeouts > 0 and canceled_count >= max_timeouts:
+                msg = (
+                    f"Emergency exiting trade {trade}, as the exit order timed out "
+                    f"{max_timeouts} times. force selling {order['amount']}."
+                )
                 logger.warning(msg)
                 self.send_dp_message(msg)
                 self.emergency_exit(trade, order["price"], order["amount"])
@@ -2059,8 +2071,7 @@ class FreqtradeBot(LoggingMixin):
         gain: ProfitLossStr = "profit" if profit.profit_ratio > 0 else "loss"
 
         msg: RPCExitMsg = {
-            "type": (RPCMessageType.EXIT_FILL if fill
-                     else RPCMessageType.EXIT),
+            "type": (RPCMessageType.EXIT_FILL if fill else RPCMessageType.EXIT),
             "trade_id": trade.id,
             "exchange": trade.exchange.capitalize(),
             "pair": trade.pair,
@@ -2469,9 +2480,7 @@ class FreqtradeBot(LoggingMixin):
         max_custom_price_allowed = proposed_price + (proposed_price * cust_p_max_dist_r)
 
         # Bracket between min_custom_price_allowed and max_custom_price_allowed
-        return max(
-            min(valid_custom_price, max_custom_price_allowed),
-            min_custom_price_allowed)
+        return max(min(valid_custom_price, max_custom_price_allowed), min_custom_price_allowed)
 
     def send_dp_message(self, msg: str) -> None:
         if msg not in self.__msg_cache:

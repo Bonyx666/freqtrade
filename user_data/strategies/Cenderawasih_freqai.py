@@ -65,8 +65,9 @@ class Cenderawasih_freqai(IStrategy):
     def bot_start(self):
         self.model = CustomModel(self.config)
 
-    def populate_any_indicators(self, metadata, pair, df, tf, informative=None,
-            coin="", set_generalized_indicators=False):
+    def populate_any_indicators(
+        self, metadata, pair, df, tf, informative=None, coin="", set_generalized_indicators=False
+    ):
         """
         Function designed to automatically generate, name and merge features
         from user indicated timeframes in the configuration file. User controls the indicators
@@ -88,7 +89,6 @@ class Cenderawasih_freqai(IStrategy):
 
             # first loop is automatically duplicating indicators for time periods
             for t in self.freqai_info["feature_parameters"]["indicator_periods_candles"]:
-
                 t = int(t)
                 # informative[f"%-{coin}rsi-period_{t}"] = ta.RSI(informative, timeperiod=t)
                 # informative[f"%-{coin}mfi-period_{t}"] = ta.MFI(informative, timeperiod=t)
@@ -174,7 +174,6 @@ class Cenderawasih_freqai(IStrategy):
         return df
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-
         self.freqai_info = self.config["freqai"]
         self.pair = metadata["pair"]
         sgi = True
@@ -209,7 +208,6 @@ class Cenderawasih_freqai(IStrategy):
         return dataframe
 
     def populate_entry_trend(self, df: DataFrame, metadata: dict) -> DataFrame:
-
         enter_long_conditions = [df["do_predict"] == 1, df["&-s_close"] > df["target_roi"]]
 
         if enter_long_conditions:
@@ -240,9 +238,18 @@ class Cenderawasih_freqai(IStrategy):
     def get_ticker_indicator(self):
         return int(self.config["timeframe"][:-1])
 
-    def confirm_trade_exit(self, pair: str, trade: Trade, order_type: str, amount: float,
-            rate: float, time_in_force: str, exit_reason: str, current_time, **kwargs,) -> bool:
-
+    def confirm_trade_exit(
+        self,
+        pair: str,
+        trade: Trade,
+        order_type: str,
+        amount: float,
+        rate: float,
+        time_in_force: str,
+        exit_reason: str,
+        current_time,
+        **kwargs,
+    ) -> bool:
         entry_tag = trade.enter_tag
         follow_mode = self.config.get("freqai", {}).get("follow_mode", False)
         if not follow_mode:
@@ -259,7 +266,8 @@ class Cenderawasih_freqai(IStrategy):
 
         return True
 
-def tv_wma(df, length = 9) -> DataFrame:
+
+def tv_wma(df, length=9) -> DataFrame:
     """
     Source: Tradingview "Moving Average Weighted"
     Pinescript Author: Unknown
@@ -282,7 +290,8 @@ def tv_wma(df, length = 9) -> DataFrame:
     tv_wma = (sum / norm) if norm > 0 else 0
     return tv_wma
 
-def tv_hma(dataframe, length = 9, field = 'close') -> DataFrame:
+
+def tv_hma(dataframe, length=9, field="close") -> DataFrame:
     """
     Source: Tradingview "Hull Moving Average"
     Pinescript Author: Unknown

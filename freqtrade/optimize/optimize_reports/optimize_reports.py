@@ -186,7 +186,8 @@ def generate_strategy_comparison(bt_stats: Dict) -> List[Dict]:
         tabular_data[-1]["expectancy_ratio"] = result["expectancy_ratio"]
         tabular_data[-1]["max_drawdown_account"] = result["max_drawdown_account"]
         tabular_data[-1]["max_drawdown_abs"] = fmt_coin(
-            result["max_drawdown_abs"], result["stake_currency"], False)
+            result["max_drawdown_abs"], result["stake_currency"], False
+        )
     return tabular_data
 
 

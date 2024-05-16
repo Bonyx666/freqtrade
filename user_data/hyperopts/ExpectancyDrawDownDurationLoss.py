@@ -4,6 +4,7 @@ MaxDrawDownHyperOptLoss
 This module defines the alternative HyperOptLoss class which can be used for
 Hyperoptimization.
 """
+
 from datetime import datetime
 
 from pandas import DataFrame
@@ -13,7 +14,6 @@ from freqtrade.optimize.hyperopt import IHyperOptLoss
 
 
 class ExpectancyDrawDownDurationLoss(IHyperOptLoss):
-
     """
     Defines the loss function for hyperopt.
 
@@ -22,24 +22,28 @@ class ExpectancyDrawDownDurationLoss(IHyperOptLoss):
     """
 
     @staticmethod
-    def hyperopt_loss_function(results: DataFrame, trade_count: int,
-                               min_date: datetime, max_date: datetime,
-                               *args, **kwargs) -> float:
-
+    def hyperopt_loss_function(
+        results: DataFrame,
+        trade_count: int,
+        min_date: datetime,
+        max_date: datetime,
+        *args,
+        **kwargs,
+    ) -> float:
         """
         Objective function.
 
         Uses profit ratio weighted max_drawdown when drawdown is available.
         Otherwise directly optimizes profit ratio.
         """
-        total_profit = results['profit_abs'].sum()
-        trade_duration = results['trade_duration'].mean()
+        total_profit = results["profit_abs"].sum()
+        trade_duration = results["trade_duration"].mean()
 
         if trade_duration == 0:
             trade_duration = 1
 
         try:
-            max_drawdown = calculate_max_drawdown(results, value_col='profit_abs')
+            max_drawdown = calculate_max_drawdown(results, value_col="profit_abs")
         except ValueError:
             # No losing trade, therefore no drawdown.
             # Return 0 because this is bad scenario
@@ -50,5 +54,5 @@ class ExpectancyDrawDownDurationLoss(IHyperOptLoss):
 
         if (drawdown_loss > 0) and (expectancy < 0):
             expectancy = expectancy * -1
-            
-        return  drawdown_loss * min(expectancy, 2)  / trade_duration
+
+        return drawdown_loss * min(expectancy, 2) / trade_duration

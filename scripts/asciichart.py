@@ -36,13 +36,27 @@ reset = "\033[0m"
 
 
 __all__ = [
-    'plot', 'black', 'red',
-    'green', 'yellow', 'blue',
-    'magenta', 'cyan', 'lightgray',
-    'default', 'darkgray', 'lightred',
-    'lightgreen', 'lightyellow', 'lightblue',
-    'lightmagenta', 'lightcyan', 'white', 'reset',
+    "plot",
+    "black",
+    "red",
+    "green",
+    "yellow",
+    "blue",
+    "magenta",
+    "cyan",
+    "lightgray",
+    "default",
+    "darkgray",
+    "lightred",
+    "lightgreen",
+    "lightyellow",
+    "lightblue",
+    "lightmagenta",
+    "lightcyan",
+    "white",
+    "reset",
 ]
+
 
 # Python 3.2 has math.isfinite, which could have been used, but to support older
 # versions, this little helper is shorter than having to keep doing not isnan(),
@@ -51,11 +65,13 @@ __all__ = [
 def _isnum(n):
     return not isnan(n)
 
+
 def colored(char, color):
     if not color:
         return char
     else:
         return color + char + reset
+
 
 def plot(series, cfg=None):
     """Generate an ascii chart for a series of numbers.
@@ -125,30 +141,30 @@ def plot(series, cfg=None):
               10 ┼╯      ╰
     """
     if len(series) == 0:
-        return ''
+        return ""
 
     if not isinstance(series[0], list):
         if all(isnan(n) for n in series):
-            return ''
+            return ""
         else:
             series = [series]
 
     cfg = cfg or {}
 
-    colors = cfg.get('colors', [None])
+    colors = cfg.get("colors", [None])
 
-    minimum = cfg.get('min', min(filter(_isnum, [j for i in series for j in i])))
-    maximum = cfg.get('max', max(filter(_isnum, [j for i in series for j in i])))
+    minimum = cfg.get("min", min(filter(_isnum, [j for i in series for j in i])))
+    maximum = cfg.get("max", max(filter(_isnum, [j for i in series for j in i])))
 
-    default_symbols = ['┼', '┤', '╶', '╴', '─', '╰', '╭', '╮', '╯', '│']
-    symbols = cfg.get('symbols', default_symbols)
+    default_symbols = ["┼", "┤", "╶", "╴", "─", "╰", "╭", "╮", "╯", "│"]
+    symbols = cfg.get("symbols", default_symbols)
 
     if minimum > maximum:
-        raise ValueError('The min value cannot exceed the max value.')
+        raise ValueError("The min value cannot exceed the max value.")
 
     interval = maximum - minimum
-    offset = cfg.get('offset', 3)
-    height = cfg.get('height', interval)
+    offset = cfg.get("offset", 3)
+    height = cfg.get("height", interval)
     ratio = height / interval if interval > 0 else 1
 
     min2 = int(floor(minimum * ratio))
@@ -167,9 +183,9 @@ def plot(series, cfg=None):
         width = max(width, len(series[i]))
     width += offset
 
-    placeholder = cfg.get('format', '{:8.2f} ')
+    placeholder = cfg.get("format", "{:8.2f} ")
 
-    result = [[' '] * width for i in range(rows + 1)]
+    result = [[" "] * width for i in range(rows + 1)]
 
     # axis and labels
     for y in range(min2, max2 + 1):
@@ -183,7 +199,6 @@ def plot(series, cfg=None):
         result[rows - scaled(d0)][offset - 1] = symbols[0]
 
     for i in range(0, len(series)):
-
         color = colors[i % len(colors)]
 
         # plot the line
@@ -208,8 +223,12 @@ def plot(series, cfg=None):
                 result[rows - y0][x + offset] = colored(symbols[4], color)
                 continue
 
-            result[rows - y1][x + offset] = colored(symbols[5], color) if y0 > y1 else colored(symbols[6], color)
-            result[rows - y0][x + offset] = colored(symbols[7], color) if y0 > y1 else colored(symbols[8], color)
+            result[rows - y1][x + offset] = (
+                colored(symbols[5], color) if y0 > y1 else colored(symbols[6], color)
+            )
+            result[rows - y0][x + offset] = (
+                colored(symbols[7], color) if y0 > y1 else colored(symbols[8], color)
+            )
 
             start = min(y0, y1) + 1
             end = max(y0, y1)
@@ -217,7 +236,8 @@ def plot(series, cfg=None):
                 result[rows - y][x + offset] = colored(symbols[9], color)
 
     # return '\n'.join([''.join(row).rstrip() for row in result])
-    return [''.join(row).rstrip() for row in result]
+    return ["".join(row).rstrip() for row in result]
+
 
 def plot_str(p):
-    return '\n'.join(p)
+    return "\n".join(p)

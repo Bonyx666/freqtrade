@@ -473,9 +473,11 @@ class Telegram(RPCHandler):
             if msg["order_rate"]:
                 message += f"*Exit Rate:* `{fmt_coin(msg['order_rate'], msg['quote_currency'])}`"
         elif msg["type"] == RPCMessageType.EXIT_FILL:
-            message += (f"*Exit Rate:* `{fmt_coin(msg['close_rate'], msg['quote_currency'])}`\n"
-                        f"*Min Profit:* `{msg['min_profit']:.2%}`\n"
-                        f"*Max Profit:* `{msg['max_profit']:.2%}`\n")
+            message += (
+                f"*Exit Rate:* `{fmt_coin(msg['close_rate'], msg['quote_currency'])}`\n"
+                f"*Min Profit:* `{msg['min_profit']:.2%}`\n"
+                f"*Max Profit:* `{msg['max_profit']:.2%}`\n"
+            )
 
         if is_sub_trade:
             stake_amount_fiat = self.__format_profit_fiat(msg, "stake_amount")
@@ -744,30 +746,38 @@ class Telegram(RPCHandler):
             ]
 
             if position_adjust:
-                max_buy_str = (f"/{max_entries + 1}" if (max_entries > 0) else "")
-                lines.extend([
-                    "*Number of Entries:* `{num_entries}" + max_buy_str + "`",
-                    "*Number of Exits:* `{num_exits}`"
-                ])
+                max_buy_str = f"/{max_entries + 1}" if (max_entries > 0) else ""
+                lines.extend(
+                    [
+                        "*Number of Entries:* `{num_entries}" + max_buy_str + "`",
+                        "*Number of Exits:* `{num_exits}`",
+                    ]
+                )
 
-            lines.extend([
-                f"*Open Rate:* `{round_value(r['open_rate'], 8)}`",
-                f"*Close Rate:* `{round_value(r['close_rate'], 8)}`" if r['close_rate'] else "",
-                "*Open Date:* `{open_date}`",
-                "*Close Date:* `{close_date}`" if r['close_date'] else "",
-                f" \n*Current Rate:* `{round_value(r['current_rate'], 8)}`" if r['is_open'] else "",
-                ("*Unrealized Profit:* " if r['is_open'] else "*Close Profit: *")
-                + "`{profit_ratio:.2%}` `({profit_abs_r})`",
-                "*Min Profit:* `{min_profit:.2%}`",
-                "*Max Profit:* `{max_profit:.2%}`",
-            ])
+            lines.extend(
+                [
+                    f"*Open Rate:* `{round_value(r['open_rate'], 8)}`",
+                    f"*Close Rate:* `{round_value(r['close_rate'], 8)}`" if r["close_rate"] else "",
+                    "*Open Date:* `{open_date}`",
+                    "*Close Date:* `{close_date}`" if r["close_date"] else "",
+                    f" \n*Current Rate:* `{round_value(r['current_rate'], 8)}`"
+                    if r["is_open"]
+                    else "",
+                    ("*Unrealized Profit:* " if r["is_open"] else "*Close Profit: *")
+                    + "`{profit_ratio:.2%}` `({profit_abs_r})`",
+                    "*Min Profit:* `{min_profit:.2%}`",
+                    "*Max Profit:* `{max_profit:.2%}`",
+                ]
+            )
 
             if r["is_open"]:
                 if r.get("realized_profit"):
-                    lines.extend([
-                        "*Realized Profit:* `{realized_profit_ratio:.2%} ({realized_profit_r})`",
-                        "*Total Profit:* `{total_profit_ratio:.2%} ({total_profit_abs_r})`"
-                    ])
+                    lines.extend(
+                        [
+                            "*Realized Profit:* `{realized_profit_ratio:.2%} ({realized_profit_r})`",
+                            "*Total Profit:* `{total_profit_ratio:.2%} ({total_profit_abs_r})`",
+                        ]
+                    )
 
                 # Append empty line to improve readability
                 lines.append(" ")

@@ -688,34 +688,41 @@ class LocalTrade:
             "close_profit": self.close_profit,  # Deprecated
             "close_profit_pct": round(self.close_profit * 100, 2) if self.close_profit else None,
             "close_profit_abs": self.close_profit_abs,  # Deprecated
-
-            "trade_duration_s": (int((self.close_date_utc - self.open_date_utc).total_seconds())
-                                 if self.close_date else None),
-            "trade_duration": (int((self.close_date_utc - self.open_date_utc).total_seconds() // 60)
-                               if self.close_date else None),
-
+            "trade_duration_s": (
+                int((self.close_date_utc - self.open_date_utc).total_seconds())
+                if self.close_date
+                else None
+            ),
+            "trade_duration": (
+                int((self.close_date_utc - self.open_date_utc).total_seconds() // 60)
+                if self.close_date
+                else None
+            ),
             "profit_ratio": self.close_profit,
             "profit_pct": round(self.close_profit * 100, 2) if self.close_profit else None,
             "profit_abs": self.close_profit_abs,
-
             "exit_reason": self.exit_reason,
             "exit_order_status": self.exit_order_status,
             "stop_loss_abs": self.stop_loss,
             "stop_loss_ratio": self.stop_loss_pct if self.stop_loss_pct else None,
             "stop_loss_pct": (self.stop_loss_pct * 100) if self.stop_loss_pct else None,
-            "stoploss_last_update": (self.stoploss_last_update_utc.strftime(DATETIME_PRINT_FORMAT)
-                                     if self.stoploss_last_update_utc else None),
+            "stoploss_last_update": (
+                self.stoploss_last_update_utc.strftime(DATETIME_PRINT_FORMAT)
+                if self.stoploss_last_update_utc
+                else None
+            ),
             "stoploss_last_update_timestamp": dt_ts_none(self.stoploss_last_update_utc),
             "initial_stop_loss_abs": self.initial_stop_loss,
-            "initial_stop_loss_ratio": (self.initial_stop_loss_pct
-                                        if self.initial_stop_loss_pct else None),
-            "initial_stop_loss_pct": (self.initial_stop_loss_pct * 100
-                                      if self.initial_stop_loss_pct else None),
+            "initial_stop_loss_ratio": (
+                self.initial_stop_loss_pct if self.initial_stop_loss_pct else None
+            ),
+            "initial_stop_loss_pct": (
+                self.initial_stop_loss_pct * 100 if self.initial_stop_loss_pct else None
+            ),
             "min_rate": self.min_rate,
             "max_rate": self.max_rate,
             "min_profit": self.min_profit,
             "max_profit": self.max_profit,
-
             "leverage": self.leverage,
             "interest_rate": self.interest_rate,
             "liquidation_price": self.liquidation_price,
@@ -1114,8 +1121,11 @@ class LocalTrade:
         )
 
     def calc_profit_ratio(
-        self, rate: float, amount: Optional[float] = None,
-        open_rate: Optional[float] = None, use_first_rate=False
+        self,
+        rate: float,
+        amount: Optional[float] = None,
+        open_rate: Optional[float] = None,
+        use_first_rate=False,
     ) -> float:
         """
         Calculates the profit as ratio (including fee).
@@ -1339,13 +1349,15 @@ class LocalTrade:
 
     @property
     def min_profit(self) -> float:
-        return self.calc_profit_ratio(self.min_profit_rate,
-                                      use_first_rate=(self.nr_of_successful_entries > 1))
+        return self.calc_profit_ratio(
+            self.min_profit_rate, use_first_rate=(self.nr_of_successful_entries > 1)
+        )
 
     @property
     def max_profit(self) -> float:
-        return self.calc_profit_ratio(self.max_profit_rate,
-                                      use_first_rate=(self.nr_of_successful_entries > 1))
+        return self.calc_profit_ratio(
+            self.max_profit_rate, use_first_rate=(self.nr_of_successful_entries > 1)
+        )
 
     @property
     def nr_of_successful_entries(self) -> int:

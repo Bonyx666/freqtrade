@@ -133,8 +133,8 @@ class Webhook(RPCHandler):
         elif self._format == "json":
             return post(url, json=payload, timeout=timeout)
         elif self._format == "raw":
-            return post(url, data=payload["data"],
-                        headers={"Content-Type": "text/plain"},
-                        timeout=timeout)
+            return post(
+                url, data=payload["data"], headers={"Content-Type": "text/plain"}, timeout=timeout
+            )
         else:
             raise NotImplementedError(f"Unknown format: {self._format}")
