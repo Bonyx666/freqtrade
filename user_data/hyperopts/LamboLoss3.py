@@ -6,17 +6,19 @@ Hyperoptimization.
 """
 
 from datetime import datetime
+
 import numpy as np
 from pandas import DataFrame
 
 from freqtrade.constants import Config
-from freqtrade.data.metrics import calculate_expectancy, calculate_max_drawdown
+from freqtrade.data.metrics import calculate_expectancy
 from freqtrade.optimize.hyperopt import IHyperOptLoss
 
+
 # Set maximum expectancy used in the calculation
-max_expectancy = 10
-max_profit_ratio = 10
-max_avg_profit = 200
+max_expectancy = 1
+max_profit_ratio = 3
+max_avg_profit = 10
 
 
 class LamboLoss3(IHyperOptLoss):
@@ -45,7 +47,6 @@ class LamboLoss3(IHyperOptLoss):
         # total_profit = results['profit_abs'].sum()
 
         starting_balance = config["dry_run_wallet"]
-        stake_amount = config["stake_amount"]
         max_profit_abs = (max_avg_profit / 100) * results["stake_amount"]
 
         strict_profit_abs = np.minimum(max_profit_abs, results["profit_abs"])
@@ -61,16 +62,12 @@ class LamboLoss3(IHyperOptLoss):
 
         total_profit = strict_profit_abs.sum()
 
-        expectancy, expectancy_ratio = calculate_expectancy(results)
+        _, expectancy_ratio = calculate_expectancy(results)
 
         total_trades = len(results)
 
-        trade_duration = results["trade_duration"].mean()
         backtest_days = (max_date - min_date).days or 1
         average_trades_per_day = round(total_trades / backtest_days, 5)
-
-        # if (nb_loss_trades == 0):
-        #     return -total_profit * 100
 
         loss_value = (
             total_profit
