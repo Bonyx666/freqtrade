@@ -18,5 +18,3 @@ sudo chmod +x /usr/local/bin/docker-compose
 sudo groupadd -f docker
 sudo usermod -aG docker $USER
 newgrp docker
-
-docker-compose --version
