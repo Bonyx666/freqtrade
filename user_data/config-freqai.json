@@ -10,6 +10,7 @@
         "data_kitchen_thread_count": 3,
         "activate_tensorboard": false,
         "feature_parameters": {
+            "include_timeframes": ["15m"],
             "include_shifted_candles": 2,
             "DI_threshold": 0.9,
             "weight_factor": 0.9,
