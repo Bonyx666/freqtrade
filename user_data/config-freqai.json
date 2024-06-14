@@ -7,7 +7,6 @@
         "live_retrain_hours": 24,
         "identifier": "belimbing",
         "save_backtest_models": true,
-        "data_kitchen_thread_count": 3,
         "activate_tensorboard": false,
         "feature_parameters": {
             "include_timeframes": ["15m"],
