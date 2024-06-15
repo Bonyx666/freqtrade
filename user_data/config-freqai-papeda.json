@@ -33,6 +33,6 @@
             "DI_cutoff": 1,
             "&s-minima_sort_threshold":-1,
             "&s-maxima_sort_threshold":1
-        },
+        }
     }
 }
