@@ -14,7 +14,7 @@ services:
       trade
       --logfile /freqtrade/user_data/logs/freqai1.log
       --config /freqtrade/user_data/config-freqai.json
-      --freqaimodel LightGBMRegressor
+      --freqaimodel CatboostRegressorMultiTarget
 
   binance_proxy:
     image: nightshift2k/binance-proxy:latest
