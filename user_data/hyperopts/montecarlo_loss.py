@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
 from scipy.stats import norm
-from freqtrade.optimize.hyperopt import IHyperOptLoss
+
 from freqtrade.constants import Config
 from freqtrade.data.metrics import calculate_max_drawdown
+from freqtrade.optimize.hyperopt import IHyperOptLoss
+
 
 # Predefined constants to control the behavior of the loss function.
 ITERATIONS = 500  # Number of Monte Carlo simulations to run.
@@ -15,6 +17,7 @@ MAX_LOSS = 100000  # Maximum loss value to use as a penalty.
 
 np.random.seed(1337)  # Seed for reproducibility of Monte Carlo simulations.
 
+
 class montecarlo_loss(IHyperOptLoss):
     """
     Custom loss function that combines Monte Carlo simulations, System Quality Number (SQN),
@@ -24,11 +27,9 @@ class montecarlo_loss(IHyperOptLoss):
     Monte Carlo simulation outcomes, encouraging strategies that are both profitable
     and robust.
     """
-    
+
     @staticmethod
-    def hyperopt_loss_function(
-        results: pd.DataFrame, config: Config, *args, **kwargs
-    ) -> float:
+    def hyperopt_loss_function(results: pd.DataFrame, config: Config, *args, **kwargs) -> float:
         """
         Calculates the loss for a given set of trading results.
 
@@ -40,18 +41,13 @@ class montecarlo_loss(IHyperOptLoss):
         - float: Calculated loss. Lower (more negative) values indicate better performance.
         """
         # Calculate metrics used to evaluate strategy performance.
-        mc_profit_ratio = MontecarloSQNLoss._calculate_mc_profit_ratio(results, config)
-        sqn = MontecarloSQNLoss._calculate_sqn(results)
-        dd = MontecarloSQNLoss._calculate_drawdown(results, config)
+        mc_profit_ratio = montecarlo_loss._calculate_mc_profit_ratio(results, config)
+        sqn = montecarlo_loss._calculate_sqn(results)
+        dd = montecarlo_loss._calculate_drawdown(results, config)
         profit_total = results["profit_abs"].sum()
 
         # Apply penalties based on performance criteria.
-        if (
-            profit_total <= 0
-            or mc_profit_ratio <= 0
-            or dd >= MAX_DRAWDOWN
-            or sqn <= MIN_SQN
-        ):
+        if profit_total <= 0 or mc_profit_ratio <= 0 or dd >= MAX_DRAWDOWN or sqn <= MIN_SQN:
             return MAX_LOSS
 
         return -mc_profit_ratio  # Negate the profit ratio as we seek to minimize the loss.
@@ -80,6 +76,7 @@ class montecarlo_loss(IHyperOptLoss):
             )
         except Exception as e:
             import logging
+
             logging.error(e)  # Log error if drawdown calculation fails.
             max_drawdown_relative = 0.0
         return max_drawdown_relative
