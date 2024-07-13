@@ -1,4 +1,4 @@
-id=$(. /etc/os-release && echo "$id")
+id=$(grep '^id=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
 echo $id
 # sudo apt-get update
 # sudo apt-get install -y ca-certificates curl gnupg
