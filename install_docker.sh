@@ -3,7 +3,7 @@ os_id=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
 sudo apt-get update
 sudo apt-get install -y ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
-sudo url -fsSL https://download.docker.com/linux/$os_id/gpg -o /etc/apt/keyrings/docker.asc
+sudo curl -fsSL https://download.docker.com/linux/$os_id/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 
 echo \
