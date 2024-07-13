@@ -1,4 +1,4 @@
-id=$(grep '^id=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+id=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
 echo "Distro used is $id"
 # sudo apt-get update
 # sudo apt-get install -y ca-certificates curl gnupg
