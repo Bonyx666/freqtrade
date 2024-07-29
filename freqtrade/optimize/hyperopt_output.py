@@ -24,6 +24,7 @@ class HyperoptOutput:
         self.table.add_column("Profit", justify="right")
         self.table.add_column("Avg duration", justify="right")
         self.table.add_column("Objective", justify="right")
+        self.table.add_column("Expectancy Ratio", justify="right")
         self.table.add_column("Max Drawdown (Acct)", justify="right")
 
     def _add_row(self, data: List[Union[str, Text]]):
@@ -102,6 +103,8 @@ class HyperoptOutput:
                     str(r["results_metrics"]["holding_avg"]),
                     # "Objective":
                     f"{r['loss']:,.5f}" if r["loss"] != 100000 else "N/A",
+                    # "Expectancy Ratio":
+                    f"{r['results_metrics']['expectancy_ratio']:,.3f}",
                     # "Max Drawdown (Acct)":
                     "{} {}".format(
                         fmt_coin(
