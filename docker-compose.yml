@@ -1,5 +1,4 @@
 ---
-version: '3'
 services:
   freqtrade:
     image: stash86/freqtrade:linux-amd64
