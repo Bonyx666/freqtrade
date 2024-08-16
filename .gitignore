@@ -116,3 +116,5 @@ target/
 !user_data/other_configs/config*
 !user_data/hyperopts*
 !config_examples/config_freqai.example.json
+
+docker-compose-*.yml
