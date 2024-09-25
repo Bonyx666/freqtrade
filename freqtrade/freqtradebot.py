@@ -62,7 +62,7 @@ from freqtrade.rpc.rpc_types import (
 )
 from freqtrade.strategy.interface import IStrategy
 from freqtrade.strategy.strategy_wrapper import strategy_safe_wrapper
-from freqtrade.util import MeasureTime, PeriodicCache
+from freqtrade.util import FtPrecise, MeasureTime, PeriodicCache
 from freqtrade.util.migrations.binance_mig import migrate_binance_futures_names
 from freqtrade.wallets import Wallets
 
@@ -814,7 +814,14 @@ class FreqtradeBot(LoggingMixin):
         if stake_amount is not None and stake_amount < 0.0:
             # We should decrease our position
             amount = self.exchange.amount_to_contract_precision(
-                trade.pair, abs(float(stake_amount * trade.amount / trade.stake_amount))
+                trade.pair,
+                abs(
+                    float(
+                        FtPrecise(stake_amount)
+                        * FtPrecise(trade.amount)
+                        / FtPrecise(trade.stake_amount)
+                    )
+                ),
             )
 
             if amount == 0.0:
@@ -1014,7 +1021,7 @@ class FreqtradeBot(LoggingMixin):
                 base_currency=base_currency,
                 stake_currency=self.config["stake_currency"],
                 stake_amount=stake_amount,
-                amount=amount,
+                amount=0,
                 is_open=True,
                 amount_requested=amount_requested,
                 fee_open=fee,
