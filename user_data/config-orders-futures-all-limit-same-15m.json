@@ -4,7 +4,7 @@
     "ignore_buying_expired_candle_after": 120,
     "unfilledtimeout": {
         "entry": 7,
-        "exit": 1500,
+        "exit": 5,
         "unit": "minutes"
     },
     "order_types": {
