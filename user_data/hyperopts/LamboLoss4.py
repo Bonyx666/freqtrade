@@ -5,7 +5,6 @@ This module defines the alternative HyperOptLoss class which can be used for
 Hyperoptimization.
 """
 
-import math
 from datetime import datetime
 
 import numpy as np
@@ -17,16 +16,16 @@ from freqtrade.optimize.hyperopt import IHyperOptLoss
 
 
 # Set maximum expectancy used in the calculation
-max_expectancy = 2
-max_profit_ratio = 5
-max_avg_profit = 200
+max_expectancy = 0.25
+max_profit_ratio = 3
+max_avg_profit = 10
 
 
 class LamboLoss4(IHyperOptLoss):
     """
     Defines the loss function for hyperopt.
 
-    Important params: exp ratio, profit factor, avg profit %, total trades and sqrt of trade dur
+    Important params: expectancy ratio, profit factor, avg profit % and avg trades per day
     """
 
     @staticmethod
@@ -63,21 +62,19 @@ class LamboLoss4(IHyperOptLoss):
 
         total_profit = strict_profit_abs.sum()
 
-        expectancy, expectancy_ratio = calculate_expectancy(results)
+        _, expectancy_ratio = calculate_expectancy(results)
 
         total_trades = len(results)
 
-        trade_duration = results["trade_duration"].mean()
-        if trade_duration == 0:
-            trade_duration = 1
+        backtest_days = (max_date - min_date).days or 1
+        average_trades_per_day = round(total_trades / backtest_days, 5)
 
         loss_value = (
             total_profit
             * min(average_profit, max_avg_profit)
             * min(profit_factor, max_profit_ratio)
             * min(expectancy_ratio, max_expectancy)
-            * total_trades
-            / math.sqrt(max(trade_duration, 5))
+            * average_trades_per_day
         )
 
         if (total_profit < 0) and (loss_value > 0):
