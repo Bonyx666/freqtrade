@@ -147,8 +147,7 @@ class Bybit(Exchange):
         stake_amount: float,
         leverage: float,
         wallet_balance: float,  # Or margin balance
-        mm_ex_1: float = 0.0,  # (Binance) Cross only
-        upnl_ex_1: float = 0.0,  # (Binance) Cross only
+        open_trades: list,
     ) -> Optional[float]:
         """
         Important: Must be fetching data from cached values as this is used by backtesting!
@@ -178,6 +177,7 @@ class Bybit(Exchange):
         :param wallet_balance: Amount of margin_mode in the wallet being used to trade
             Cross-Margin Mode: crossWalletBalance
             Isolated-Margin Mode: isolatedWalletBalance
+        :param open_trades: List of other open trades in the same wallet
         """
 
         market = self.markets[pair]
@@ -238,7 +238,13 @@ class Bybit(Exchange):
         return orders
 
     def fetch_order(self, order_id: str, pair: str, params: Optional[Dict] = None) -> Dict:
+        if self.exchange_has("fetchOrder"):
+            # Set acknowledged to True to avoid ccxt exception
+            params = {"acknowledged": True}
+
         order = super().fetch_order(order_id, pair, params)
+        if not order:
+            order = self.fetch_order_emulated(order_id, pair, {})
         if (
             order.get("status") == "canceled"
             and order.get("filled") == 0.0
