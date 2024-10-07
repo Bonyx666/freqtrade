@@ -11,6 +11,7 @@ from pandas import DataFrame, to_datetime
 from freqtrade.constants import DEFAULT_DATAFRAME_COLUMNS, Config
 from freqtrade.enums import CandleType, TradingMode
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -145,7 +146,7 @@ def reduce_mem_usage(pair: str, dataframe: DataFrame) -> DataFrame:
     for col in df.columns[1:]:
         col_type = df[col].dtype
 
-        if col_type != object:
+        if col_type is not object:
             c_min = df[col].min()
             c_max = df[col].max()
             if str(col_type)[:3] == "int":
