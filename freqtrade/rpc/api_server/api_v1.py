@@ -193,6 +193,7 @@ def trade_detail(tradeid: int = 0, rpc: RPC = Depends(get_rpc)):
         return rpc._rpc_trade_status([tradeid])[0]
 
         import json
+
         from freqtrade.persistence import Trade, init_db
 
         config = Depends(get_config)
