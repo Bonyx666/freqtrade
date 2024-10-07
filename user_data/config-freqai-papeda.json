@@ -14,7 +14,6 @@
             "include_timeframes": ["15m"],
             "include_corr_pairlist": [],
             "label_period_candles": 24,
-            "include_shifted_candles": 2,
             "weight_factor": 0.9,
             "principal_component_analysis": true,
             "use_SVM_to_remove_outliers": true,
