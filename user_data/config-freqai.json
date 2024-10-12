@@ -1,38 +1,32 @@
 {
-    "freqai": {
-        "enabled": true,
-        "purge_old_models": 0,
-        "train_period_days": 30,
-        "backtest_period_days": 1,
-        "live_retrain_hours": 24,
-        "identifier": "belimbing",
-        "save_backtest_models": true,
-        "activate_tensorboard": false,
-        "feature_parameters": {
-            "DI_threshold": 10,
-            "noise_standard_deviation": 0.02,
-            "include_timeframes": ["15m"],
-            "include_corr_pairlist": [],
-            "label_period_candles": 24,
-            "include_shifted_candles": 2,
-            "weight_factor": 0.9,
-            "principal_component_analysis": true,
-            "use_SVM_to_remove_outliers": true,
-            "plot_feature_importances": 0,
-            "indicator_periods_candles": [10, 20]
-        },
-        "data_split_parameters": {
-            "test_size": 0.33,
-            "random_state": 1
-        },
-        "model_training_parameters": {},
-        "extra_returns_per_train": {
-            "DI_value_param1":0,
-            "DI_value_param2":0,
-            "DI_value_param3":0,
-            "DI_cutoff": 1,
-            "&s-minima_sort_threshold":-1,
-            "&s-maxima_sort_threshold":1
-        }
-    }
+    "max_open_trades": 1,
+    "stake_currency": "USDT",
+    "stake_amount" : "unlimited",
+    "amend_last_stake_amount ": true,
+    "tradable_balance_ratio": 0.99,
+    //"available_capital": 100,
+    "dry_run": false,
+    "dry_run_wallet": 100,
+    "cancel_open_orders_on_exit": false,
+    "bot_name": "freqtrade_bot",
+    "initial_state": "running",
+    "force_entry_enable": false,
+    "internals": {
+        "process_throttle_secs": 3
+    },
+    // "db_url": "sqlite:///user_data/tradesv3.sqlite",
+    "db_url": "sqlite:////freqtrade/user_data/cend-2-kucoin.sqlite", // docker
+    "user_data_dir" : "user_data",
+    "strategy": "SampleStrategy",
+    "strategy_path": "freqtrade_strategies",
+    "add_config_files": [
+        "config-pairlist-btc.json",
+        "config-orders-futures-all-limit-same-15m.json",
+        "config-exchange.json",
+        "config-exchange-general-binance-proxy-docker-futures.json",
+        "config-discord.json",
+        "config-discord-general.json",
+        "config-api.json",
+        "config-freqai-salak.json",
+    ]
 }
