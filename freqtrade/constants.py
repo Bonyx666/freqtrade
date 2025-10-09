@@ -1,8 +1,10 @@
-# pragma pylint: disable=too-few-public-methods
+# pragma: pylint: disable=too-few-public-methods
 
 """
 bot constants
 """
+
+from __future__ import annotations
 
 from typing import Any, Literal
 
@@ -26,7 +28,7 @@ PRICING_SIDES = ["ask", "bid", "same", "other"]
 ORDERTYPE_POSSIBILITIES = ["limit", "market"]
 _ORDERTIF_POSSIBILITIES = ["GTC", "FOK", "IOC", "PO"]
 ORDERTIF_POSSIBILITIES = _ORDERTIF_POSSIBILITIES + [t.lower() for t in _ORDERTIF_POSSIBILITIES]
-STOPLOSS_PRICE_TYPES = [p for p in PriceType]
+STOPLOSS_PRICE_TYPES = list(PriceType)
 HYPEROPT_LOSS_BUILTIN = [
     "ShortTradeDurHyperOptLoss",
     "OnlyProfitHyperOptLoss",
@@ -206,8 +208,9 @@ PairWithTimeframe = tuple[str, str, CandleType]
 ListPairsWithTimeframes = list[PairWithTimeframe]
 
 # Type for trades list
-TradeList = list[list]
-# ticks, pair, timeframe, CandleType
+TradeList = list[list[Any]]
+# tick, pair, timeframe, from_ts, to_ts (CandleType was included previously in the comment;
+# the tuple below contains tick (str), pair (str), CandleType, optional from_ts, optional to_ts)
 TickWithTimeframe = tuple[str, str, CandleType, int | None, int | None]
 ListTicksWithTimeframes = list[TickWithTimeframe]
 
@@ -222,6 +225,5 @@ Config = dict[str, Any]
 # Exchange part of the configuration.
 ExchangeConfig = dict[str, Any]
 IntOrInf = float
-
 
 EntryExecuteMode = Literal["initial", "pos_adjust", "replace"]
